@@ -114,23 +114,55 @@ def simulate_days(world: World, days: int, rng) -> list[Event]:
                 poi_id = chosen_locations[npc.id]
                 if intent == "eat":
                     npc.needs.hunger = _clamp(npc.needs.hunger + 40)
-                    e = Event(world.day, slot, "buy", [npc.id], poi_id, f"{npc.name} eats a meal.", {"hunger": +40})
+                    e = Event(
+                        day=world.day,
+                        slot=slot,
+                        type="buy",
+                        actors=[npc.id],
+                        location=poi_id,
+                        text=f"{npc.name} eats a meal.",
+                        effects={"hunger": +40},
+                    )
                     slot_events.append(e)
                     remember_many([npc], e.text)
                 elif intent == "rest":
                     npc.needs.rest = _clamp(npc.needs.rest + 50)
-                    e = Event(world.day, slot, "rest", [npc.id], poi_id, f"{npc.name} gets some rest.", {"rest": +50})
+                    e = Event(
+                        day=world.day,
+                        slot=slot,
+                        type="rest",
+                        actors=[npc.id],
+                        location=poi_id,
+                        text=f"{npc.name} gets some rest.",
+                        effects={"rest": +50},
+                    )
                     slot_events.append(e)
                     remember_many([npc], e.text)
                 elif intent == "work":
                     npc.needs.hunger = _clamp(npc.needs.hunger - 5)
                     coins[npc.id] = int(coins.get(npc.id, 0)) + 3
-                    e = Event(world.day, slot, "work", [npc.id], poi_id, f"{npc.name} works a shift.", {"coins": +3, "hunger": -5})
+                    e = Event(
+                        day=world.day,
+                        slot=slot,
+                        type="work",
+                        actors=[npc.id],
+                        location=poi_id,
+                        text=f"{npc.name} works a shift.",
+                        effects={"coins": +3, "hunger": -5},
+                    )
                     slot_events.append(e)
                     remember_many([npc], e.text)
                 elif intent == "goal":
                     goal = rng.choice(npc.goals)
-                    e = Event(world.day, slot, "rumor", [npc.id], poi_id, f"{npc.name} pursues a goal: {goal}.", {})
+                    e = Event(
+                        day=world.day,
+                        slot=slot,
+                        type="rumor",
+                        actors=[npc.id],
+                        location=poi_id,
+                        text=f"{npc.name} pursues a goal: {goal}.",
+                        effects={},
+                    )
                     slot_events.append(e)
                     remember_many([npc], e.text)
 
@@ -152,7 +184,15 @@ def simulate_days(world: World, days: int, rng) -> list[Event]:
                         if rel is not None:
                             rel.affinity = max(-100, min(100, rel.affinity + nudge))
                         text = f"{npc.name} chats with {partner.name}."
-                        e = Event(world.day, slot, "talk", [npc.id, partner.id], poi_id, text, {"social": +10, "affinity": nudge})
+                        e = Event(
+                            day=world.day,
+                            slot=slot,
+                            type="talk",
+                            actors=[npc.id, partner.id],
+                            location=poi_id,
+                            text=text,
+                            effects={"social": +10, "affinity": nudge},
+                        )
                         slot_events.append(e)
                         remember_many([npc, partner], text)
 
